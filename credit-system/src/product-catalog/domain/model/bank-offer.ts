@@ -1,3 +1,5 @@
+import { CatalogEntry } from '../../../shared/domain/archetype/catalog-entry';
+import { Validity } from '../../../shared/domain/archetype/validity';
 import { BankCode } from '../../../shared/domain';
 import { BankOfferId } from '../value-objects/bank-offer-id';
 import { TierId } from '../value-objects/tier-id';
@@ -23,21 +25,28 @@ export interface BankOfferProps {
 /**
  * BankOffer = CatalogEntry in the Product Archetype.
  *
- * A commercial offering from a bank — wraps tiers with marketing
- * information, validity period, and sector configuration.
+ * Extends the abstract CatalogEntry to provide a commercial offering
+ * from a bank — wrapping Tiers (ProductTypes) with marketing information,
+ * validity period, and sector configuration.
+ *
+ * Archetype mapping:
+ *   - id, displayName, description, categories, metadata, validity
+ *     come from CatalogEntry (the abstract archetype)
+ *   - bankCode, sectors, getTierIdsForSector()
+ *     are banking-domain-specific attributes
  */
-export class BankOffer {
+export class BankOffer extends CatalogEntry {
   readonly id: BankOfferId;
   readonly bankCode: BankCode;
   readonly displayName: string;
   readonly description: string;
   readonly sectors: readonly SectorConfig[];
-  readonly validFrom: string;
-  readonly validUntil: string;
+  readonly validity: Validity;
   readonly categories: readonly string[];
   readonly metadata: Record<string, string>;
 
   constructor(props: BankOfferProps) {
+    super();
     if (!props.displayName || props.displayName.trim().length === 0) {
       throw new Error('BankOffer displayName cannot be empty');
     }
@@ -46,14 +55,19 @@ export class BankOffer {
     this.displayName = props.displayName;
     this.description = props.description;
     this.sectors = [...props.sectors];
-    this.validFrom = props.validFrom;
-    this.validUntil = props.validUntil;
+    this.validity = Validity.between(props.validFrom, props.validUntil);
     this.categories = [...props.categories];
     this.metadata = { ...props.metadata };
   }
 
-  isAvailableAt(date: string): boolean {
-    return date >= this.validFrom && date <= this.validUntil;
+  /** @deprecated Use isAvailableAt() inherited from CatalogEntry */
+  get validFrom(): string {
+    return this.validity.from!;
+  }
+
+  /** @deprecated Use isAvailableAt() inherited from CatalogEntry */
+  get validUntil(): string {
+    return this.validity.to!;
   }
 
   getTierIdsForSector(sector: Sector): TierId[] {
@@ -63,10 +77,6 @@ export class BankOffer {
 
   getAllTierIds(): TierId[] {
     return this.sectors.flatMap((s) => [...s.tierIds]);
-  }
-
-  isInCategory(category: string): boolean {
-    return this.categories.includes(category);
   }
 
   withMetadata(metadata: Record<string, string>): BankOffer {
@@ -80,8 +90,8 @@ export class BankOffer {
       displayName: this.displayName,
       description: this.description,
       sectors: [...this.sectors],
-      validFrom: this.validFrom,
-      validUntil: this.validUntil,
+      validFrom: this.validity.from!,
+      validUntil: this.validity.to!,
       categories: [...this.categories],
       metadata: { ...this.metadata },
     };

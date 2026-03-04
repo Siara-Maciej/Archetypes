@@ -1,3 +1,5 @@
+import { ProductInstance } from '../../../shared/domain/archetype/product-instance';
+import { ProductFeatureInstances } from '../../../shared/domain/archetype/product-feature';
 import { BankCode } from '../../../shared/domain';
 import { Money } from '../../../shared/domain/money';
 import { Rate } from '../../../shared/domain/rate';
@@ -21,15 +23,26 @@ export interface CreditAgreementProps {
   termMonths: number;
   status: CreditAgreementStatus;
   signedAt: string;
+  features?: ProductFeatureInstances;
 }
 
 /**
  * CreditAgreement = ProductInstance in the Product Archetype.
  *
- * A concrete credit agreement created after a CreditOffer is accepted.
- * Financial parameters are frozen at the moment of signing.
+ * Extends the abstract ProductInstance to represent a concrete credit
+ * agreement created after a CreditOffer is accepted. Financial parameters
+ * are frozen at the moment of signing.
+ *
+ * Archetype mapping:
+ *   - id, productTypeId (tierId), features
+ *     come from ProductInstance (the abstract archetype)
+ *   - agreementNumber is the tracking identifier (like SerialNumber)
+ *   - bankCode, creditAmount, monthlyPayment, interestRate, etc.
+ *     are banking-domain-specific attributes
+ *   - status lifecycle (ACTIVE → COMPLETED/DEFAULTED/TERMINATED)
+ *     is the domain-specific state machine
  */
-export class CreditAgreement {
+export class CreditAgreement extends ProductInstance {
   readonly id: CreditAgreementId;
   readonly agreementNumber: string;
   readonly bankCode: BankCode;
@@ -41,8 +54,13 @@ export class CreditAgreement {
   readonly termMonths: number;
   private _status: CreditAgreementStatus;
   readonly signedAt: string;
+  readonly features: ProductFeatureInstances;
+
+  /** ProductType reference (Tier ID) — required by ProductInstance archetype. */
+  readonly productTypeId: string;
 
   constructor(props: CreditAgreementProps) {
+    super();
     if (!props.agreementNumber || props.agreementNumber.trim().length === 0) {
       throw new Error('Agreement number cannot be empty');
     }
@@ -51,12 +69,14 @@ export class CreditAgreement {
     this.bankCode = props.bankCode;
     this.creditOfferId = props.creditOfferId;
     this.tierId = props.tierId;
+    this.productTypeId = props.tierId;
     this.creditAmount = props.creditAmount;
     this.monthlyPayment = props.monthlyPayment;
     this.interestRate = props.interestRate;
     this.termMonths = props.termMonths;
     this._status = props.status;
     this.signedAt = props.signedAt;
+    this.features = props.features ?? ProductFeatureInstances.empty();
   }
 
   get status(): CreditAgreementStatus {

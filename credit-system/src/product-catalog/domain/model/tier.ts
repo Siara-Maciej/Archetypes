@@ -1,3 +1,6 @@
+import { ProductType } from '../../../shared/domain/archetype/product-type';
+import { ApplicabilityConstraint } from '../../../shared/domain/archetype/applicability-constraint';
+import { ProductFeatureTypes } from '../../../shared/domain/archetype/product-feature';
 import { BankCode } from '../../../shared/domain';
 import { Rate } from '../../../shared/domain/rate';
 import { Months } from '../../../shared/domain/months';
@@ -9,6 +12,7 @@ export interface TierProps {
   id: TierId;
   bankCode: BankCode;
   name: string;
+  description?: string;
   sector: Sector;
   salaryRange: SalaryRange;
   interestRate: Rate;
@@ -20,18 +24,27 @@ export interface TierProps {
   processingFee: Rate;
   insuranceRequired: boolean;
   metadata: Record<string, string>;
+  featureTypes?: ProductFeatureTypes;
+  applicabilityConstraint?: ApplicabilityConstraint;
 }
 
 /**
  * Tier = ProductType in the Product Archetype.
  *
- * Defines a credit product's financial parameters for a specific
- * salary range and sector. Exists independently of any customer.
+ * Extends the abstract ProductType to define a credit product's financial
+ * parameters for a specific salary range and sector.
+ *
+ * Archetype mapping:
+ *   - id, name, description, metadata, featureTypes, applicabilityConstraint
+ *     come from ProductType (the abstract archetype)
+ *   - bankCode, sector, salaryRange, interestRate, etc.
+ *     are banking-domain-specific attributes
  */
-export class Tier {
+export class Tier extends ProductType {
   readonly id: TierId;
   readonly bankCode: BankCode;
   readonly name: string;
+  readonly description: string;
   readonly sector: Sector;
   readonly salaryRange: SalaryRange;
   readonly interestRate: Rate;
@@ -43,8 +56,11 @@ export class Tier {
   readonly processingFee: Rate;
   readonly insuranceRequired: boolean;
   readonly metadata: Record<string, string>;
+  readonly featureTypes: ProductFeatureTypes;
+  readonly applicabilityConstraint: ApplicabilityConstraint;
 
   constructor(props: TierProps) {
+    super();
     if (!props.name || props.name.trim().length === 0) {
       throw new Error('Tier name cannot be empty');
     }
@@ -54,6 +70,7 @@ export class Tier {
     this.id = props.id;
     this.bankCode = props.bankCode;
     this.name = props.name;
+    this.description = props.description ?? '';
     this.sector = props.sector;
     this.salaryRange = props.salaryRange;
     this.interestRate = props.interestRate;
@@ -65,6 +82,9 @@ export class Tier {
     this.processingFee = props.processingFee;
     this.insuranceRequired = props.insuranceRequired;
     this.metadata = { ...props.metadata };
+    this.featureTypes = props.featureTypes ?? ProductFeatureTypes.empty();
+    this.applicabilityConstraint =
+      props.applicabilityConstraint ?? ApplicabilityConstraint.alwaysTrue();
   }
 
   matchesSalary(salary: number): boolean {
