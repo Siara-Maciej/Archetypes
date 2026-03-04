@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import {
-  TIER_REPOSITORY,
-  TierRepository,
-} from '../product-catalog/domain/repository/tier.repository';
-import {
-  BANK_OFFER_REPOSITORY,
-  BankOfferRepository,
-} from '../product-catalog/domain/repository/bank-offer.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductCatalogModule } from '../product-catalog/product-catalog.module';
 import { BANK_STRATEGY_REGISTRY } from './domain/services/bank-strategy-registry';
 import { CREDIT_OFFER_REPOSITORY } from './domain/repository/credit-offer.repository';
 import { InMemoryCreditOfferRepository } from './infrastructure/persistence/in-memory-credit-offer.repository';
+import { CreditOfferEntity } from './infrastructure/entities/credit-offer.entity';
+import { CachedCreditOfferQueriesService } from './infrastructure/persistence/cached-credit-offer-queries.service';
 import { MapBankStrategyRegistry } from './infrastructure/registry/map-bank-strategy.registry';
 import { DefaultTierMatchingPipeline } from './infrastructure/pipeline/default-tier-matching.pipeline';
 import { DefaultCreditCalculationPipeline } from './infrastructure/pipeline/default-credit-calculation.pipeline';
@@ -79,7 +74,11 @@ const commandHandlers = [
 const queryHandlers = [GetCreditOfferHandler, ListActiveCreditOffersHandler];
 
 @Module({
-  imports: [CqrsModule, ProductCatalogModule],
+  imports: [
+    CqrsModule,
+    ProductCatalogModule,
+    TypeOrmModule.forFeature([CreditOfferEntity]),
+  ],
   providers: [
     // Steps (available for DI)
     ...reusableMatchingSteps,
@@ -194,10 +193,17 @@ const queryHandlers = [GetCreditOfferHandler, ListActiveCreditOffersHandler];
       ],
     },
 
+    // Cached queries
+    CachedCreditOfferQueriesService,
+
     // Handlers
     ...commandHandlers,
     ...queryHandlers,
   ],
-  exports: [CREDIT_OFFER_REPOSITORY, BANK_STRATEGY_REGISTRY],
+  exports: [
+    CREDIT_OFFER_REPOSITORY,
+    BANK_STRATEGY_REGISTRY,
+    CachedCreditOfferQueriesService,
+  ],
 })
 export class CreditQuotingModule {}
