@@ -1,5 +1,7 @@
 # OPL Agentic Engineering Platform — plan architektury dla GitHub Copilot
 
+> **Wersja rozszerzona (v2):** [v2/00-INDEX.md](v2/00-INDEX.md): zasady per element, anatomia workflow, mapa pamięci, skrypty (ast-grep / Biome / tsc / Bun), fazy F0–F6, szablony.
+
 > Status: **Proposed** · Data: 2026-10-24 · Zakres: workflow agentowy (implementacja, testy, review, analiza dokumentacji) dla dużego monorepo produktu Orange · Prefiks wszystkich agentów i skilli: **`opl-`**
 
 ---
