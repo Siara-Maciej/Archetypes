@@ -13,6 +13,7 @@
 | [04-SKRYPTY.md](04-SKRYPTY.md) | **Jakie skrypty dodać, po co**, na czym je oprzeć (ast-grep / Biome / tsc / Bun), kontrakt wyjścia, szkice kodu |
 | [05-FAZY.md](05-FAZY.md) | Kolejne fazy wdrożenia F0–F6: zadania, produkty, kryteria wyjścia, ryzyka |
 | [06-SZABLONY.md](06-SZABLONY.md) | Gotowe szablony: agent, skill, instrukcja, reguła, ADR, wzorzec, karta modułu, spec workflow, schematy JSON, hooki, prompt |
+| [07-URUCHAMIANIE.md](07-URUCHAMIANIE.md) | Jak uruchamiać workflow: **tryb interaktywny w VS Code (docelowy teraz)** oraz demo trybu auto (Copilot CLI + `opl run drive`) |
 
 ## Teza w jednym akapicie
 

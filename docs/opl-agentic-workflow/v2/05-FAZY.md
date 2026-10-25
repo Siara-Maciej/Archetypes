@@ -108,6 +108,8 @@ Orientacyjnie: F0 1 tydz., F1 2 tyg., F2 2–3 tyg., F3 2–3 tyg., F4 3 tyg., F
 
 ## F5: Automatyzacja: CI, nightly, coding agent (2 tygodnie)
 
+> **Decyzja 2026-10-25:** na teraz tylko tryb interaktywny w VS Code. F5 jest odłożone. Do tego czasu tryb auto istnieje jako demo lokalne ([07, część B](07-URUCHAMIANIE.md#część-b-tryb-auto-copilot-cli--skrypty-demonstracja)).
+
 **Zadania**
 - [ ] `.github/workflows/opl-pr-review.yml`: review headless L2 na PR-ach pilota (tylko komentarze `confirmed blocking`, reszta w podsumowaniu).
 - [ ] `.github/workflows/opl-nightly.yml`: W10 knowledge refresh (PR z częścią generowaną + issue z driftem).
