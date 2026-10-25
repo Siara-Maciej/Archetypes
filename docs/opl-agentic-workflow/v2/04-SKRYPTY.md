@@ -1,5 +1,7 @@
 # 04. Skrypty: co dodać, po co i jak zbudować na ast-grep, Biome, tsc i Bun
 
+> **Aktualizacja:** katalog komend z tego dokumentu obowiązuje dalej, ale implementacja przechodzi do generycznego, konfigurowalnego `opl-kit` (capabilities zamiast bezpośrednich wywołań narzędzi, pluginy, DI). Patrz [08-ARCHITEKTURA-GENERYCZNA.md](08-ARCHITEKTURA-GENERYCZNA.md). Szkice poniżej pokazują implementacje konkretnych pluginów dla stacku Bun, Biome, ast-grep i tsc.
+
 ## 1. Po co skrypty, skoro agent „umie czytać kod”?
 
 | Problem bez skryptów | Co daje skrypt |

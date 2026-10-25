@@ -14,6 +14,7 @@
 | [05-FAZY.md](05-FAZY.md) | Kolejne fazy wdrożenia F0–F6: zadania, produkty, kryteria wyjścia, ryzyka |
 | [06-SZABLONY.md](06-SZABLONY.md) | Gotowe szablony: agent, skill, instrukcja, reguła, ADR, wzorzec, karta modułu, spec workflow, schematy JSON, hooki, prompt |
 | [07-URUCHAMIANIE.md](07-URUCHAMIANIE.md) | Jak uruchamiać workflow: **tryb interaktywny w VS Code (docelowy teraz)** oraz demo trybu auto (Copilot CLI + `opl run drive`) |
+| [08-ARCHITEKTURA-GENERYCZNA.md](08-ARCHITEKTURA-GENERYCZNA.md) | **`opl-kit`**: generyczne, konfigurowalne narzędzia (capabilities ↔ providers), czysta architektura z DI, SOLID i DRY, pluginy, discovery i bootstrap (`opl init`), generatory hostów i CI |
 
 ## Teza w jednym akapicie
 
